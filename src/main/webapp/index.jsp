@@ -5,8 +5,8 @@
         <title>JSP - Hello World</title>
     </head>
     <body>
-        <h1><%= "Hello Raven Framework!" %></h1>
+        <h1><%= "Hello world!" %></h1>
         <br/>
-        <a href="./hello_raven_framework">Let's go</a>
+        <a href="./hello_world">Let's go</a>
     </body>
 </html>
