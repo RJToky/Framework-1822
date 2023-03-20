@@ -12,13 +12,28 @@ import java.util.HashMap;
 
 @WebServlet(name = "FrontServlet", value = "/")
 public class FrontServlet extends HttpServlet {
-    HashMap<String, Mapping> mappingUrls;
+    HashMap<String, Mapping> mappingUrls = new HashMap<>();
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+
+        try {
+            Util.initMappingUrls(getServletContext(), mappingUrls);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        System.out.println(mappingUrls.get("emp-all").getClassName());
+        System.out.println(mappingUrls.get("emp-all").getMethod());
+    }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) {
         try {
             PrintWriter out = response.getWriter();
             String url = Util.getURI(request);
             out.println(url);
+
         } catch (Exception ignored) { }
     }
 
@@ -31,5 +46,4 @@ public class FrontServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         processRequest(request, response);
     }
-
 }
