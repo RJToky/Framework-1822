@@ -14,13 +14,13 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class Util {
-    public  static String getURI(HttpServletRequest request) {
+    public static String getURI(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         StringBuilder rep = new StringBuilder();
 
         String[] array = requestURI.split("/");
         for (int i = 2; i < array.length; i++) {
-            rep.append(array[i]).append("/");
+            rep.append(array[i]);
         }
         return rep.toString();
     }
@@ -28,7 +28,7 @@ public class Util {
     public static void getAllClassName(File path, ArrayList<String> allClassName) {
         String className;
 
-        for(File file : Objects.requireNonNull(path.listFiles())) {
+        for (File file : Objects.requireNonNull(path.listFiles())) {
             if (file.isDirectory()) {
                 getAllClassName(file, allClassName);
             } else {
@@ -46,7 +46,8 @@ public class Util {
         }
     }
 
-    public static void initMappingUrls(ServletContext servletContext, HashMap<String, Mapping> mappingUrls) throws ClassNotFoundException {
+    public static void initMappingUrls(ServletContext servletContext, HashMap<String, Mapping> mappingUrls)
+            throws ClassNotFoundException {
         ClassLoader classLoader = servletContext.getClassLoader();
         URI uri = null;
         try {

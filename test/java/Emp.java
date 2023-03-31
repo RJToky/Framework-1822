@@ -1,8 +1,10 @@
+import etu1822.framework.ModelView;
 import etu1822.framework.annotation.Url;
 
 public class Emp {
 
-    @Url("emp-all")
-    public void findAll() {
+    @Url("accueil")
+    public ModelView getIndex() {
+        return new ModelView("accueil.jsp");
     }
 }

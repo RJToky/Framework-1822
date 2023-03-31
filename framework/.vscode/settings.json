@@ -1,0 +1,6 @@
+{
+  "java.project.referencedLibraries": [
+    "lib/**/*.jar",
+    "d:\\ITU\\S4\\Mr Naina\\Framework-1822\\test\\WEB-INF\\lib\\servlet-api.jar"
+  ]
+}
