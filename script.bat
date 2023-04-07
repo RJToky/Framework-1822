@@ -5,3 +5,4 @@ cd ../test/java/
 javac -d ../WEB-INF/classes/ *.java
 cd ../
 jar -cvf D:/apache-tomcat-10.0.22/webapps/test.war WEB-INF *.jsp
+cd ../

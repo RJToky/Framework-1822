@@ -3,7 +3,7 @@ import etu1822.framework.annotation.Url;
 
 public class Emp {
 
-    @Url("accueil")
+    @Url("/accueil")
     public ModelView getIndex() {
         return new ModelView("accueil.jsp");
     }
