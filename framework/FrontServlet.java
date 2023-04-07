@@ -10,6 +10,7 @@ import jakarta.servlet.annotation.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 @WebServlet(name = "FrontServlet", value = "/")
 public class FrontServlet extends HttpServlet {
@@ -33,8 +34,14 @@ public class FrontServlet extends HttpServlet {
                 Mapping mapping = mappingUrls.get(url);
                 Class<?> classMapping = Class.forName(mapping.getClassName());
                 Object obj = classMapping.getConstructor().newInstance();
-                ModelView view = (ModelView) classMapping.getDeclaredMethod(mapping.getMethod()).invoke(obj);
-                RequestDispatcher dispatch = request.getRequestDispatcher(view.getView());
+                ModelView modelView = (ModelView) classMapping.getDeclaredMethod(mapping.getMethod()).invoke(obj);
+
+                HashMap<String, Object> data = modelView.getData();
+                for (Entry<String, Object> entrySet : data.entrySet()) {
+                    request.setAttribute((String) entrySet.getKey(), entrySet.getValue());
+                }
+
+                RequestDispatcher dispatch = request.getRequestDispatcher(modelView.getView());
                 dispatch.forward(request, response);
             }
         } catch (Exception e) {
