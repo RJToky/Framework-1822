@@ -17,12 +17,10 @@ public class Util {
     public static String getURI(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         StringBuilder rep = new StringBuilder();
-        System.out.println(requestURI);
         String[] array = requestURI.split("/");
         for (int i = 2; i < array.length; i++) {
             rep.append("/").append(array[i]);
         }
-        System.out.println(rep.toString());
         return rep.toString();
     }
 

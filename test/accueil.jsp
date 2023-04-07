@@ -1,3 +1,4 @@
+<%@ page import="model.Emp" %>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -7,6 +8,10 @@
     <title>Document</title>
   </head>
   <body>
-    <h1>Hello world</h1>
+    <h1>List Emp</h1>
+    <% Emp[] allEmp = (Emp[]) request.getAttribute("allEmp"); %>
+    <% for(int i = 0; i < allEmp.length; i++) { %>
+      <li><%= allEmp[i].getNom() %></li>
+    <% } %>
   </body>
 </html>
