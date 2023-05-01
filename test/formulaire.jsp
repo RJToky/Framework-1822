@@ -1,4 +1,3 @@
-<%@ page import="model.Emp" %>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -8,10 +7,11 @@
     <title>Document</title>
   </head>
   <body>
-    <h1>List Emp</h1>
-    <% Emp[] allEmp = (Emp[]) request.getAttribute("allEmp"); %>
-    <% for(int i = 0; i < allEmp.length; i++) { %>
-      <li><%= allEmp[i].getNom() %></li>
-    <% } %>
+    <h1>Ajout employe</h1>
+    <form action="./ajouter" method="get">
+      <input type="text" name="nom" placeholder="nom" />
+      <input type="number" name="age" placeholder="age" />
+      <input type="submit" value="valider" />
+    </form>
   </body>
 </html>

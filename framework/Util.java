@@ -12,6 +12,8 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
+import java.beans.PropertyEditorManager;
+import java.beans.PropertyEditorSupport;
 
 public class Util {
     public static String getURI(HttpServletRequest request) {
@@ -70,6 +72,12 @@ public class Util {
                 }
             }
         }
+    }
+
+    public static <T> T convert(String value, Class<T> type) {
+        PropertyEditorSupport editor = (PropertyEditorSupport) PropertyEditorManager.findEditor(type);
+        editor.setAsText(value);
+        return (T) editor.getValue();
     }
 
 }

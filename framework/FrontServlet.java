@@ -9,6 +9,8 @@ import jakarta.servlet.annotation.*;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -34,6 +36,20 @@ public class FrontServlet extends HttpServlet {
                 Mapping mapping = mappingUrls.get(url);
                 Class<?> classMapping = Class.forName(mapping.getClassName());
                 Object obj = classMapping.getConstructor().newInstance();
+
+                Field[] fields = classMapping.getDeclaredFields();
+                for (Field field : fields) {
+                    if (request.getParameter(field.getName()) != null) {
+                        field.setAccessible(true);
+
+                        String value = request.getParameter(field.getName());
+                        if (value != null) {
+                            Object convertedValue = Util.convert(value, field.getType());
+                            field.set(obj, convertedValue);
+                        }
+                    }
+                }
+
                 ModelView modelView = (ModelView) classMapping.getDeclaredMethod(mapping.getMethod()).invoke(obj);
 
                 HashMap<String, Object> data = modelView.getData();
