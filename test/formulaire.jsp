@@ -9,9 +9,9 @@
   <body>
     <h1>Ajout employe</h1>
     <form action="./ajouter" method="get">
-        <input type="text" placeholder="nom">
-        <input type="number" placeholder="age">
-        <input type="submit" value="valider">
+      <input type="text" name="nom" placeholder="nom" />
+      <input type="number" name="age" placeholder="age" />
+      <input type="submit" value="valider" />
     </form>
   </body>
 </html>

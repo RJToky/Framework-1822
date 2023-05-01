@@ -11,7 +11,7 @@
     <h1>Liste employe</h1>
     <% Emp[] allEmp = (Emp[]) request.getAttribute("allEmp"); %>
     <% for(int i = 0; i < allEmp.length; i++) { %>
-      <li><%= allEmp[i].getNom() %></li>
+      <li><%= allEmp[i].getNom() + " " + allEmp[i].getAge() %></li>
     <% } %>
   </body>
 </html>
