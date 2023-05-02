@@ -7,10 +7,9 @@
     <title>Document</title>
   </head>
   <body>
-    <h1>Ajout employe</h1>
-    <form action="./add" method="get">
-      <input type="text" name="nom" placeholder="nom" />
-      <input type="number" name="age" placeholder="age" />
+    <h1>Recherche employe</h1>
+    <form action="./search" method="get">
+      <input type="number" name="id" placeholder="id" />
       <input type="submit" value="valider" />
     </form>
   </body>

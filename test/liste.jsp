@@ -9,9 +9,11 @@
   </head>
   <body>
     <h1>Liste employe</h1>
-    <% Emp[] allEmp = (Emp[]) request.getAttribute("allEmp"); %>
-    <% for(int i = 0; i < allEmp.length; i++) { %>
-      <li><%= allEmp[i].getNom() + " " + allEmp[i].getAge() %></li>
-    <% } %>
+    <% if(request.getAttribute("allEmp") != null) { %>
+      <% Emp[] allEmp = (Emp[]) request.getAttribute("allEmp"); %>
+      <% for(int i = 0; i < allEmp.length; i++) { %>
+        <li><%= allEmp[i].getNom() + " " + allEmp[i].getAge() %></li>
+      <% } %>
+    <% } else { out.println("Aucun resultat"); } %>
   </body>
 </html>
