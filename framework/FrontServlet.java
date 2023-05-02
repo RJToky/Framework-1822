@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -50,7 +51,19 @@ public class FrontServlet extends HttpServlet {
                     }
                 }
 
-                ModelView modelView = (ModelView) classMapping.getDeclaredMethod(mapping.getMethod()).invoke(obj);
+                ModelView modelView = new ModelView();
+                String[] parameters = Util.getParameters(request);
+                Method[] methods = classMapping.getDeclaredMethods();
+                for (Method method : methods) {
+                    if (method.getName().equals(mapping.getMethod())) {
+                        if (method.getParameterTypes().length > 0) {
+                            Object[] args = Util.convertParameters(parameters, method);
+                            modelView = (ModelView) method.invoke(obj, args);
+                        } else {
+                            modelView = (ModelView) method.invoke(obj);
+                        }
+                    }
+                }
 
                 HashMap<String, Object> data = modelView.getData();
                 for (Entry<String, Object> entrySet : data.entrySet()) {

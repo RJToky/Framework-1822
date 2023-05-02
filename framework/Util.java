@@ -10,6 +10,7 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Objects;
 import java.beans.PropertyEditorManager;
@@ -78,6 +79,28 @@ public class Util {
         PropertyEditorSupport editor = (PropertyEditorSupport) PropertyEditorManager.findEditor(type);
         editor.setAsText(value);
         return (T) editor.getValue();
+    }
+
+    public static String[] getParameters(HttpServletRequest request) {
+        Enumeration<String> parameterNames = request.getParameterNames();
+        ArrayList<String> list = new ArrayList<>();
+        while (parameterNames.hasMoreElements()) {
+            list.add(parameterNames.nextElement());
+        }
+
+        String[] output = new String[list.size()];
+        for (int i = 0; i < output.length; i++) {
+            output[i] = request.getParameter(list.get(i));
+        }
+        return output;
+    }
+
+    public static Object[] convertParameters(String[] parmaters, Method method) {
+        Object[] output = new Object[parmaters.length];
+        for (int i = 0; i < output.length; i++) {
+            output[i] = convert(parmaters[i], method.getParameterTypes()[i]);
+        }
+        return output;
     }
 
 }

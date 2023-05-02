@@ -4,13 +4,15 @@ import etu1822.framework.ModelView;
 import etu1822.framework.annotation.Url;
 
 public class Emp {
+    int id;
     String nom;
     int age;
 
     public Emp() {
     }
 
-    public Emp(String nom, int age) {
+    public Emp(int id, String nom, int age) {
+        this.setId(id);
         this.setNom(nom);
         this.setAge(age);
     }
@@ -20,31 +22,60 @@ public class Emp {
         ModelView modelView = new ModelView();
 
         Emp[] allEmp = new Emp[3];
-        allEmp[0] = new Emp("Toky", 19);
-        allEmp[1] = new Emp("Niaina", 17);
-        allEmp[2] = new Emp("Judichael", 18);
+        allEmp[0] = new Emp(1, "Toky", 19);
+        allEmp[1] = new Emp(2, "Niaina", 17);
+        allEmp[2] = new Emp(3, "Judichael", 18);
 
         modelView.setView("liste.jsp");
         modelView.addItem("allEmp", allEmp);
         return modelView;
     }
 
-    @Url("/formulaire")
-    public ModelView formulaire() {
+    @Url("/form-add")
+    public ModelView formAdd() {
         ModelView modelView = new ModelView();
 
         modelView.setView("formulaire.jsp");
         return modelView;
     }
 
-    @Url("/ajouter")
-    public ModelView ajouter() {
+    @Url("/add")
+    public ModelView add() {
         ModelView modelView = new ModelView();
         Emp[] allEmp = new Emp[1];
-        allEmp[0] = new Emp(this.nom, this.age);
+        allEmp[0] = new Emp(1, this.nom, this.age);
 
         modelView.setView("liste.jsp");
         modelView.addItem("allEmp", allEmp);
+        return modelView;
+    }
+
+    @Url("/form-search")
+    public ModelView formSearch() {
+        ModelView modelView = new ModelView();
+
+        modelView.setView("recherche.jsp");
+        return modelView;
+    }
+
+    @Url("/search")
+    public ModelView findById(int id) {
+        ModelView modelView = new ModelView();
+
+        Emp[] allEmp = new Emp[3];
+        allEmp[0] = new Emp(1, "Toky", 19);
+        allEmp[1] = new Emp(2, "Niaina", 17);
+        allEmp[2] = new Emp(3, "Judichael", 18);
+
+        for (Emp emp : allEmp) {
+            if (emp.getId() == id) {
+                Emp[] temp = new Emp[1];
+                temp[0] = emp;
+                modelView.addItem("allEmp", temp);
+                break;
+            }
+        }
+        modelView.setView("liste.jsp");
         return modelView;
     }
 
@@ -62,6 +93,14 @@ public class Emp {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
 }
