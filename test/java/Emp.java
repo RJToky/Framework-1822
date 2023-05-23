@@ -17,7 +17,7 @@ public class Emp {
         this.setAge(age);
     }
 
-    @Url("/liste")
+    @Url("/liste.do")
     public ModelView liste() {
         ModelView modelView = new ModelView();
 
@@ -31,7 +31,7 @@ public class Emp {
         return modelView;
     }
 
-    @Url("/form-add")
+    @Url("/form-add.do")
     public ModelView formAdd() {
         ModelView modelView = new ModelView();
 
@@ -39,7 +39,7 @@ public class Emp {
         return modelView;
     }
 
-    @Url("/add")
+    @Url("/add.do")
     public ModelView add() {
         ModelView modelView = new ModelView();
         Emp[] allEmp = new Emp[1];
@@ -50,7 +50,7 @@ public class Emp {
         return modelView;
     }
 
-    @Url("/form-search")
+    @Url("/form-search.do")
     public ModelView formSearch() {
         ModelView modelView = new ModelView();
 
@@ -58,7 +58,7 @@ public class Emp {
         return modelView;
     }
 
-    @Url("/search")
+    @Url("/search.do")
     public ModelView findById(int id) {
         ModelView modelView = new ModelView();
 

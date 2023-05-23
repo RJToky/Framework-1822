@@ -8,7 +8,7 @@
   </head>
   <body>
     <h1>Recherche employe</h1>
-    <form action="./search" method="get">
+    <form action="./search.do" method="get">
       <input type="number" name="id" placeholder="id" />
       <input type="submit" value="valider" />
     </form>

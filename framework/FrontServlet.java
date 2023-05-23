@@ -15,7 +15,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-@WebServlet(name = "FrontServlet", value = "/")
+@WebServlet(name = "FrontServlet", value = "*.do")
 public class FrontServlet extends HttpServlet {
     HashMap<String, Mapping> mappingUrls = new HashMap<>();
 
