@@ -3,18 +3,23 @@ package etu1822.framework.servlet;
 import etu1822.framework.Mapping;
 import etu1822.framework.ModelView;
 import etu1822.framework.utility.Util;
+import etu1822.framework.utility.FileUpload;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
-import jakarta.servlet.annotation.*;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.annotation.MultipartConfig;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+@MultipartConfig
 @WebServlet(name = "FrontServlet", value = "*.do")
 public class FrontServlet extends HttpServlet {
     HashMap<String, Mapping> mappingUrls = new HashMap<>();
@@ -37,12 +42,26 @@ public class FrontServlet extends HttpServlet {
                 Mapping mapping = mappingUrls.get(url);
                 Class<?> classMapping = Class.forName(mapping.getClassName());
                 Object obj = classMapping.getConstructor().newInstance();
-
                 Field[] fields = classMapping.getDeclaredFields();
+
                 for (Field field : fields) {
+                    System.out.println(request.getParameter(field.getName()));
+
+                    if (field.getType() == FileUpload.class) {
+                        field.setAccessible(true);
+                        Part part = request.getPart(field.getName());
+                        System.out.println("part : " + part);
+                        InputStream is = part.getInputStream();
+                        String name = Paths.get(part.getSubmittedFileName()).getFileName().toString();
+                        System.out.println("name : " + name);
+                        byte[] file = is.readAllBytes();
+                        System.out.println("file : " + file);
+                        FileUpload fileUpload = new FileUpload(name, file);
+                        field.set(obj, fileUpload);
+                    }
+
                     if (request.getParameter(field.getName()) != null) {
                         field.setAccessible(true);
-
                         String value = request.getParameter(field.getName());
                         if (value != null) {
                             Object convertedValue = Util.convert(value, field.getType());

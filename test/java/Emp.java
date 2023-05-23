@@ -2,11 +2,13 @@ package model;
 
 import etu1822.framework.ModelView;
 import etu1822.framework.annotation.Url;
+import etu1822.framework.utility.FileUpload;
 
 public class Emp {
     int id;
     String nom;
     int age;
+    FileUpload cv;
 
     public Emp() {
     }
@@ -79,6 +81,17 @@ public class Emp {
         return modelView;
     }
 
+    @Url("/form-upload.do")
+    public ModelView formUpload() {
+        return new ModelView("upload.jsp");
+    }
+
+    @Url("/upload.do")
+    public ModelView upload() {
+        System.out.println(this.getCv().getName() + " " + this.getCv().getFile());
+        return formUpload();
+    }
+
     public String getNom() {
         return nom;
     }
@@ -101,6 +114,14 @@ public class Emp {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public FileUpload getCv() {
+        return cv;
+    }
+
+    public void setCv(FileUpload cv) {
+        this.cv = cv;
     }
 
 }
