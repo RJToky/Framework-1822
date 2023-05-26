@@ -2,11 +2,13 @@ package model;
 
 import etu1822.framework.ModelView;
 import etu1822.framework.annotation.Url;
+import etu1822.framework.utility.FileUpload;
 
 public class Emp {
     int id;
     String nom;
     int age;
+    FileUpload cv;
 
     public Emp() {
     }
@@ -17,7 +19,7 @@ public class Emp {
         this.setAge(age);
     }
 
-    @Url("/liste")
+    @Url("/liste.do")
     public ModelView liste() {
         ModelView modelView = new ModelView();
 
@@ -31,7 +33,7 @@ public class Emp {
         return modelView;
     }
 
-    @Url("/form-add")
+    @Url("/form-add.do")
     public ModelView formAdd() {
         ModelView modelView = new ModelView();
 
@@ -39,7 +41,7 @@ public class Emp {
         return modelView;
     }
 
-    @Url("/add")
+    @Url("/add.do")
     public ModelView add() {
         ModelView modelView = new ModelView();
         Emp[] allEmp = new Emp[1];
@@ -50,7 +52,7 @@ public class Emp {
         return modelView;
     }
 
-    @Url("/form-search")
+    @Url("/form-search.do")
     public ModelView formSearch() {
         ModelView modelView = new ModelView();
 
@@ -58,7 +60,7 @@ public class Emp {
         return modelView;
     }
 
-    @Url("/search")
+    @Url("/search.do")
     public ModelView findById(int id) {
         ModelView modelView = new ModelView();
 
@@ -77,6 +79,17 @@ public class Emp {
         }
         modelView.setView("liste.jsp");
         return modelView;
+    }
+
+    @Url("/form-upload.do")
+    public ModelView formUpload() {
+        return new ModelView("upload.jsp");
+    }
+
+    @Url("/upload.do")
+    public ModelView upload() {
+        System.out.println(this.getCv().getName() + " " + this.getCv().getFile());
+        return formUpload();
     }
 
     public String getNom() {
@@ -101,6 +114,14 @@ public class Emp {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public FileUpload getCv() {
+        return cv;
+    }
+
+    public void setCv(FileUpload cv) {
+        this.cv = cv;
     }
 
 }

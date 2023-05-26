@@ -3,19 +3,24 @@ package etu1822.framework.servlet;
 import etu1822.framework.Mapping;
 import etu1822.framework.ModelView;
 import etu1822.framework.utility.Util;
+import etu1822.framework.utility.FileUpload;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
-import jakarta.servlet.annotation.*;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.annotation.MultipartConfig;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-@WebServlet(name = "FrontServlet", value = "/")
+@MultipartConfig(fileSizeThreshold = 1024 * 1024)
+@WebServlet(name = "FrontServlet", value = "*.do")
 public class FrontServlet extends HttpServlet {
     HashMap<String, Mapping> mappingUrls = new HashMap<>();
 
@@ -37,12 +42,26 @@ public class FrontServlet extends HttpServlet {
                 Mapping mapping = mappingUrls.get(url);
                 Class<?> classMapping = Class.forName(mapping.getClassName());
                 Object obj = classMapping.getConstructor().newInstance();
-
                 Field[] fields = classMapping.getDeclaredFields();
+
                 for (Field field : fields) {
+                    System.out.println(request.getParameter(field.getName()));
+
+                    if (field.getType() == FileUpload.class) {
+                        field.setAccessible(true);
+                        try {
+                            Part part = request.getPart(field.getName());
+                            InputStream is = part.getInputStream();
+                            String name = Paths.get(part.getSubmittedFileName()).getFileName().toString();
+                            byte[] file = is.readAllBytes();
+                            FileUpload fileUpload = new FileUpload(name, file);
+                            field.set(obj, fileUpload);
+                        } catch (Exception e) {
+                        }
+                    }
+
                     if (request.getParameter(field.getName()) != null) {
                         field.setAccessible(true);
-
                         String value = request.getParameter(field.getName());
                         if (value != null) {
                             Object convertedValue = Util.convert(value, field.getType());
