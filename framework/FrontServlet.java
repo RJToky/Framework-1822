@@ -19,7 +19,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-@MultipartConfig
+@MultipartConfig(fileSizeThreshold = 1024 * 1024)
 @WebServlet(name = "FrontServlet", value = "*.do")
 public class FrontServlet extends HttpServlet {
     HashMap<String, Mapping> mappingUrls = new HashMap<>();
@@ -49,15 +49,15 @@ public class FrontServlet extends HttpServlet {
 
                     if (field.getType() == FileUpload.class) {
                         field.setAccessible(true);
-                        Part part = request.getPart(field.getName());
-                        System.out.println("part : " + part);
-                        InputStream is = part.getInputStream();
-                        String name = Paths.get(part.getSubmittedFileName()).getFileName().toString();
-                        System.out.println("name : " + name);
-                        byte[] file = is.readAllBytes();
-                        System.out.println("file : " + file);
-                        FileUpload fileUpload = new FileUpload(name, file);
-                        field.set(obj, fileUpload);
+                        try {
+                            Part part = request.getPart(field.getName());
+                            InputStream is = part.getInputStream();
+                            String name = Paths.get(part.getSubmittedFileName()).getFileName().toString();
+                            byte[] file = is.readAllBytes();
+                            FileUpload fileUpload = new FileUpload(name, file);
+                            field.set(obj, fileUpload);
+                        } catch (Exception e) {
+                        }
                     }
 
                     if (request.getParameter(field.getName()) != null) {
