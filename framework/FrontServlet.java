@@ -23,6 +23,7 @@ import java.util.Map.Entry;
 @WebServlet(name = "FrontServlet", value = "*.do")
 public class FrontServlet extends HttpServlet {
     HashMap<String, Mapping> mappingUrls = new HashMap<>();
+    HashMap<Class, Object> singleton = new HashMap<>();
 
     @Override
     public void init() throws ServletException {
