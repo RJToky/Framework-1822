@@ -1,6 +1,8 @@
 package etu1822.framework.utility;
 
 import etu1822.framework.Mapping;
+import etu1822.framework.servlet.FrontServlet;
+import etu1822.framework.annotation.Scope;
 import etu1822.framework.annotation.Url;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,6 +18,7 @@ import java.util.Objects;
 import java.beans.PropertyEditorManager;
 import java.beans.PropertyEditorSupport;
 
+@SuppressWarnings("unchecked")
 public class Util {
     public static String getURI(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
@@ -48,9 +51,9 @@ public class Util {
         }
     }
 
-    public static void initMappingUrls(ServletContext servletContext, HashMap<String, Mapping> mappingUrls)
+    public static void initFrontServlet(FrontServlet frontServlet)
             throws ClassNotFoundException {
-        ClassLoader classLoader = servletContext.getClassLoader();
+        ClassLoader classLoader = frontServlet.getServletContext().getClassLoader();
         URI uri = null;
         try {
             uri = Objects.requireNonNull(classLoader.getResource("")).toURI();
@@ -63,13 +66,22 @@ public class Util {
         Util.getAllClassName(path, allClassName);
 
         for (String className : allClassName) {
-            Class<?> classTemp = Class.forName(className);
-            Method[] methods = classTemp.getDeclaredMethods();
+            Class<?> classMapping = Class.forName(className);
+            Method[] methods = classMapping.getDeclaredMethods();
+
+            if (classMapping.getAnnotation(Scope.class) != null) {
+                if (classMapping.getAnnotation(Scope.class).value().equalsIgnoreCase("singleton")) {
+                    try {
+                        frontServlet.getSingleton().put(classMapping, classMapping.getConstructor().newInstance());
+                    } catch (Exception e) {
+                    }
+                }
+            }
 
             for (Method method : methods) {
                 if (method.getAnnotation(Url.class) != null) {
                     String key = method.getAnnotation(Url.class).value();
-                    mappingUrls.putIfAbsent(key, new Mapping(className, method.getName()));
+                    frontServlet.getMappingUrls().putIfAbsent(key, new Mapping(className, method.getName()));
                 }
             }
         }

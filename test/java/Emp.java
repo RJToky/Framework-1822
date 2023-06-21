@@ -2,8 +2,10 @@ package model;
 
 import etu1822.framework.ModelView;
 import etu1822.framework.annotation.Url;
+import etu1822.framework.annotation.Scope;
 import etu1822.framework.utility.FileUpload;
 
+@Scope("singleton")
 public class Emp {
     int id;
     String nom;
