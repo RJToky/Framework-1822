@@ -29,8 +29,8 @@ public class FrontServlet extends HttpServlet {
     public void init() throws ServletException {
         super.init();
         try {
-            Util.initMappingUrls(getServletContext(), mappingUrls);
-        } catch (ClassNotFoundException e) {
+            Util.initFrontServlet(this);
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -39,14 +39,19 @@ public class FrontServlet extends HttpServlet {
         try {
             String url = Util.getURI(request);
 
-            if (mappingUrls.containsKey(url)) {
-                Mapping mapping = mappingUrls.get(url);
+            if (this.mappingUrls.containsKey(url)) {
+                Mapping mapping = this.mappingUrls.get(url);
                 Class<?> classMapping = Class.forName(mapping.getClassName());
-                Object obj = classMapping.getConstructor().newInstance();
-                Field[] fields = classMapping.getDeclaredFields();
 
+                Object obj = null;
+                if (this.singleton.containsKey(classMapping)) {
+                    obj = this.singleton.get(classMapping);
+                } else {
+                    obj = classMapping.getConstructor().newInstance();
+                }
+
+                Field[] fields = classMapping.getDeclaredFields();
                 for (Field field : fields) {
-                    System.out.println(request.getParameter(field.getName()));
 
                     if (field.getType() == FileUpload.class) {
                         field.setAccessible(true);
@@ -109,4 +114,13 @@ public class FrontServlet extends HttpServlet {
             throws ServletException, IOException {
         processRequest(request, response);
     }
+
+    public HashMap<String, Mapping> getMappingUrls() {
+        return mappingUrls;
+    }
+
+    public HashMap<Class, Object> getSingleton() {
+        return singleton;
+    }
+
 }
