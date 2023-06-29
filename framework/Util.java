@@ -8,7 +8,6 @@ import etu1822.framework.annotation.Url;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.Part;
-
 import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -41,7 +40,7 @@ public class Util {
 
         for (File file : Objects.requireNonNull(path.listFiles())) {
             if (file.isDirectory()) {
-                getAllClassName(file, allClassName);
+                Util.getAllClassName(file, allClassName);
             } else {
                 className = file.getPath().replace(".class", "");
 
@@ -115,10 +114,8 @@ public class Util {
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
-        File path = new File(uri);
-
         ArrayList<String> allClassName = new ArrayList<>();
-        Util.getAllClassName(path, allClassName);
+        Util.getAllClassName(new File(uri), allClassName);
 
         for (String className : allClassName) {
             Class<?> classMapping = Class.forName(className);
