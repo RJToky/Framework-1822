@@ -8,7 +8,6 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.annotation.MultipartConfig;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -39,56 +38,28 @@ public class FrontServlet extends HttpServlet {
         try {
             String url = Util.getURI(request);
 
-            if (this.mappingUrls.containsKey(url)) {
-                Mapping mapping = this.mappingUrls.get(url);
+            if (this.getMappingUrls().containsKey(url)) {
+                Mapping mapping = this.getMappingUrls().get(url);
                 Class<?> classMapping = Class.forName(mapping.getClassName());
-
-                Object obj = null;
-                if (this.singleton.containsKey(classMapping)) {
-                    obj = this.singleton.get(classMapping);
-                } else {
-                    obj = classMapping.getConstructor().newInstance();
-                }
+                Object obj = Util.getInstance(this, classMapping);
 
                 Field[] fields = classMapping.getDeclaredFields();
                 for (Field field : fields) {
-
                     if (field.getType() == FileUpload.class) {
-                        field.setAccessible(true);
-                        try {
-                            Part part = request.getPart(field.getName());
-                            InputStream is = part.getInputStream();
-                            String name = Paths.get(part.getSubmittedFileName()).getFileName().toString();
-                            byte[] file = is.readAllBytes();
-                            FileUpload fileUpload = new FileUpload(name, file);
-                            field.set(obj, fileUpload);
-                        } catch (Exception e) {
-                        }
+                        Util.uploadFile(obj, field, request);
                     }
-
                     if (request.getParameter(field.getName()) != null) {
                         field.setAccessible(true);
                         String value = request.getParameter(field.getName());
+
                         if (value != null) {
                             Object convertedValue = Util.convert(value, field.getType());
                             field.set(obj, convertedValue);
                         }
                     }
                 }
-
-                ModelView modelView = new ModelView();
                 String[] parameters = Util.getParameters(request);
-                Method[] methods = classMapping.getDeclaredMethods();
-                for (Method method : methods) {
-                    if (method.getName().equals(mapping.getMethod())) {
-                        if (method.getParameterTypes().length > 0) {
-                            Object[] args = Util.convertParameters(parameters, method);
-                            modelView = (ModelView) method.invoke(obj, args);
-                        } else {
-                            modelView = (ModelView) method.invoke(obj);
-                        }
-                    }
-                }
+                ModelView modelView = Util.newModelView(obj, parameters, mapping, classMapping);
 
                 HashMap<String, Object> data = modelView.getData();
                 for (Entry<String, Object> entrySet : data.entrySet()) {
