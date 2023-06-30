@@ -1,16 +1,21 @@
 package etu1822.framework.utility;
 
 import etu1822.framework.Mapping;
+import etu1822.framework.ModelView;
 import etu1822.framework.servlet.FrontServlet;
 import etu1822.framework.annotation.Scope;
 import etu1822.framework.annotation.Url;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
-
+import jakarta.servlet.http.Part;
 import java.io.File;
+import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.http.HttpRequest;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -35,7 +40,7 @@ public class Util {
 
         for (File file : Objects.requireNonNull(path.listFiles())) {
             if (file.isDirectory()) {
-                getAllClassName(file, allClassName);
+                Util.getAllClassName(file, allClassName);
             } else {
                 className = file.getPath().replace(".class", "");
 
@@ -51,19 +56,66 @@ public class Util {
         }
     }
 
+    public static void uploadFile(Object obj, Field field, HttpServletRequest request) {
+        field.setAccessible(true);
+        try {
+            Part part = request.getPart(field.getName());
+            InputStream is = part.getInputStream();
+            String name = Paths.get(part.getSubmittedFileName()).getFileName().toString();
+            byte[] file = is.readAllBytes();
+            FileUpload fileUpload = new FileUpload(name, file);
+            field.set(obj, fileUpload);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Object getInstance(FrontServlet frontServlet, Class<?> classMapping) {
+        Object obj = null;
+        try {
+            if (frontServlet.getSingleton().containsKey(classMapping)) {
+                obj = frontServlet.getSingleton().get(classMapping);
+            } else {
+                obj = classMapping.getConstructor().newInstance();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return obj;
+    }
+
+    public static ModelView newModelView(Object obj, String[] parameters, Mapping mapping,
+            Class<?> classMapping) {
+        ModelView modelView = new ModelView();
+        Method[] methods = classMapping.getDeclaredMethods();
+        for (Method method : methods) {
+            try {
+                if (method.getName().equals(mapping.getMethod())) {
+                    if (method.getParameterTypes().length > 0) {
+                        Object[] args = Util.convertParameters(parameters, method);
+                        modelView = (ModelView) method.invoke(obj, args);
+                    } else {
+                        modelView = (ModelView) method.invoke(obj);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return modelView;
+    }
+
     public static void initFrontServlet(FrontServlet frontServlet)
-            throws ClassNotFoundException {
+            throws Exception {
         ClassLoader classLoader = frontServlet.getServletContext().getClassLoader();
         URI uri = null;
         try {
             uri = Objects.requireNonNull(classLoader.getResource("")).toURI();
         } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
-        File path = new File(uri);
-
         ArrayList<String> allClassName = new ArrayList<>();
-        Util.getAllClassName(path, allClassName);
+        Util.getAllClassName(new File(uri), allClassName);
 
         for (String className : allClassName) {
             Class<?> classMapping = Class.forName(className);
@@ -74,6 +126,7 @@ public class Util {
                     try {
                         frontServlet.getSingleton().put(classMapping, classMapping.getConstructor().newInstance());
                     } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
             }
@@ -110,7 +163,7 @@ public class Util {
     public static Object[] convertParameters(String[] parmaters, Method method) {
         Object[] output = new Object[parmaters.length];
         for (int i = 0; i < output.length; i++) {
-            output[i] = convert(parmaters[i], method.getParameterTypes()[i]);
+            output[i] = Util.convert(parmaters[i], method.getParameterTypes()[i]);
         }
         return output;
     }
