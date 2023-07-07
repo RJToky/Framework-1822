@@ -118,5 +118,3 @@ Je souhaite exprimer mes sincères remerciements aux personnes suivantes pour le
 
 Je tiens également à remercier tous ceux qui ont participé de près ou de loin à ce projet et ont apporté leur soutien. Votre contribution a été précieuse et a joué un rôle important dans la réussite de ce projet.
 
-Votre soutien et votre engagement sont grandement appréciés.
-
